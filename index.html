@@ -3328,7 +3328,8 @@
     /* nhãn trong tiêu đề hộp thoại nằm trên nền gradient: phủ lớp tối nhẹ lên tiêu đề, nhãn dùng chữ trắng trên nền tối mờ để luôn đạt tương phản */
     .modal-header::before { content: ""; position: absolute; inset: 0; background: rgba(8, 16, 36, .2); pointer-events: none }
     .modal-header > * { position: relative }
-    .md-badges .v9-tg, .md-badges .badge { background: rgba(8, 16, 36, .32); color: #fff }
+    .modal-header .md-badges .v9-pill, .modal-header .md-badges .v9-tg, .modal-header .md-badges .badge { background: rgba(8, 16, 36, .32); color: #fff }
+    .modal-header .md-badges .v9-pill i { background: #fff }
     body.dark .md-badges .badge { color: #fff }
 
     .v9-tg {
@@ -9159,27 +9160,86 @@ Cẩm Nhung 01/04/2026 08:30
         }).withFailureHandler(function (e) { btnDone(btn, '✅ Lưu sự cố vào hệ thống'); toast('Lỗi: ' + e.message, 'error'); }).themSuCo(data);
       }
 
-      // ═════════════════════════ KHUNG CHI TIẾT SỰ CỐ (bên phải danh sách, thay cho cửa sổ bật lên) ═════════════════════════
+      // ═════════════════════════ CHI TIẾT SỰ CỐ ═════════════════════════
+      // Máy tính: popup giữa màn hình (giống Nhân sự), bảng luôn đủ rộng. Điện thoại: khung toàn màn hình (v9RenderDetail) đã duyệt ở mockup V10.
       var V9_SELROW = null, V9_JUMP = false;
 
-      // Bấm một dòng trong bảng: chỉ đổi dòng đang chọn và vẽ lại khung bên phải, không vẽ lại cả bảng
+      // Đang dùng giao diện điện thoại? (thanh trên của lớp điện thoại đang hiện)
+      function v9IsPhoneUI() { var t = document.getElementById('mTop'); return !!t && getComputedStyle(t).display !== 'none'; }
+
+      // Bấm một dòng trong bảng: đánh dấu dòng đang chọn rồi mở chi tiết
       function v9Pick(i) {
         var d = _PAGED[i]; if (!d) return;
         V9_SELROW = d.row;
-        document.getElementById('v9Split').classList.remove('closed');
         document.querySelectorAll('#issueTableBody tr').forEach(function (tr) { tr.classList.add('still'); tr.classList.toggle('sel', +tr.dataset.row === d.row); });
-        v9RenderDetail(d, true);
-        v9FitTables();
+        if (v9IsPhoneUI()) {
+          document.getElementById('v9Split').classList.remove('closed');
+          v9RenderDetail(d, true);
+          v9FitTables();
+        } else v9ShowIncident(d);
       }
 
-      // Mở một sự cố từ nơi khác (Tổng quan, tìm kiếm Ctrl+K…): sang tab Sự cố và chọn đúng dòng đó
+      // Mở một sự cố từ nơi khác (Tổng quan, tìm kiếm…): máy tính hiện popup ngay tại trang đang đứng; điện thoại sang tab Sự cố và mở chi tiết
       function showDetail(d) { v9OpenIssue(d); }
       function v9OpenIssue(d) {
         if (!d) return;
-        V9_SELROW = d.row; V9_JUMP = true;
+        V9_SELROW = d.row;
+        if (!v9IsPhoneUI()) { v9ShowIncident(d); return; }
+        V9_JUMP = true;
         document.getElementById('v9Split').classList.remove('closed');
         switchTab('issues'); filterTable();
         v9FitTables();
+      }
+
+      // Popup chi tiết sự cố (cùng khung #modal với Nhân sự, Bản quyền…)
+      function v9ShowIncident(d) {
+        // Màu tiêu đề theo mức độ: nền đậm để chữ trắng luôn đọc được
+        var sevColors = {
+          'Nghiêm trọng': 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
+          'Cao': 'linear-gradient(135deg, #ea580c 0%, #9a3412 100%)',
+          'Trung bình': 'linear-gradient(135deg, #d97706 0%, #92400e 100%)',
+          'Nhẹ': 'linear-gradient(135deg, #059669 0%, #065f46 100%)'
+        };
+        document.getElementById('modalHeader').style.background = sevColors[d.severity] || 'linear-gradient(135deg, #1e40af, #7c3aed)';
+        document.getElementById('modalId').textContent = '#' + (d.id || d.row || '--');
+        var badges = statusBadge(d.status) + sevBadge(d.severity);
+        if (d.cn) badges += branchBadge(d.cn);
+        if (d.nhom) badges += groupBadge(d.nhom);
+        if (d.ls) badges += v9TypeTag(d.ls);
+        if (d.tk) badges += '<span class="badge">⏱ ' + esc(d.tk) + ' phút</span>';
+        if ((d.quaHan || '').indexOf('Quá hạn') >= 0) badges += '<span class="badge">' + esc(d.quaHan) + '</span>';
+        document.getElementById('modalBadges').innerHTML = badges;
+
+        var html = '<div class="md-section"><div class="md-section-title" style="background:var(--primary-l);color:var(--primary-t)">📌 Thông tin sự cố</div><div class="md-grid">' +
+          mdItem('📅', 'Thời gian', d.tsDisplay || d.ts || '—', 'var(--primary)') +
+          mdItem('📍', 'Chi nhánh', d.cn || '—', 'var(--accent)') +
+          mdItem('🏢', 'Phòng ban', d.pb || '—', '#06b6d4') +
+          mdItem('💻', 'Tên máy', d.tm || '—', 'var(--warning)') +
+          mdItem('👤', 'Người báo cáo', d.nd || '—', '#ec4899') +
+          mdItem('🔧', 'NV kỹ thuật', d.nk || '—', 'var(--success)') +
+          mdItem('📡', 'Hình thức', d.ht || '—', '#7c3aed') +
+          mdItem('⏱', 'TG khắc phục', d.tk ? d.tk + ' phút' : '—', '#f97316') +
+          '</div></div>';
+        html += '<div class="md-section"><div class="md-section-title" style="background:var(--warning-l);color:var(--warning)">📝 Mô tả sự cố</div>' +
+          mdCard('💬', 'Chi tiết sự cố', d.ct || 'Chưa có mô tả', 'var(--warning)') +
+          (d.note ? mdCard('📝', 'Ghi chú', d.note, '#8896ab') : '') + '</div>';
+        html += '<div class="md-section"><div class="md-section-title" style="background:var(--success-l);color:var(--success)">🔧 Kết quả xử lý</div>' +
+          mdCard('🔍', 'Nguyên nhân', d.nn || 'Chưa phân tích', 'var(--danger)') +
+          mdCard('✅', 'Cách khắc phục (tóm tắt)', d.kp || 'Chưa có', 'var(--success)') +
+          (d.hd ? mdCard('📋', 'Hướng dẫn chi tiết từng bước', d.hd, 'var(--primary)') : '') +
+          mdCard('💡', 'Đề xuất phòng tránh', d.dx || 'Chưa có', 'var(--accent)') + '</div>';
+        document.getElementById('modalBody').innerHTML = html;
+
+        var open = d.status !== 'Hoàn thành' && d.status !== 'Huỷ';
+        document.getElementById('modalFooter').innerHTML =
+          '<button class="btn btn-danger btn-sm" id="btnDeleteIncident" onclick="deleteIncident()" style="margin-right:auto">🗑 Xoá sự cố</button>' +
+          '<button class="btn btn-outline btn-sm" onclick="closeModal()">✖ Đóng</button>' +
+          (d.status === 'Chờ xử lý' ? '<button class="btn btn-primary btn-sm" onclick="closeModal();v9Quick(window._detailItem,\'Đang xử lý\')">▶ Nhận xử lý</button>' : '') +
+          (open ? '<button class="btn btn-success btn-sm" onclick="closeModal();v9Quick(window._detailItem,\'Hoàn thành\')">✓ Hoàn thành</button>' : '') +
+          '<button class="btn btn-primary btn-sm" onclick="openEditIncident()">✏️ Sửa sự cố</button>';
+        document.getElementById('modal').style.display = 'flex';
+        window._detailItem = d;
+        window._detailType = 'incident';
       }
 
       function v9ClosePane() { document.getElementById('v9Split').classList.add('closed'); v9FitTables(); }
@@ -10892,6 +10952,7 @@ Cẩm Nhung 01/04/2026 08:30
         else if (e.key === 'Escape') {
           var ov = document.getElementById('cmdkOverlay');
           if (ov && ov.classList.contains('open')) closeCmdk();
+          else if (document.getElementById('modal').style.display === 'flex') closeModal();
         }
       });
 
@@ -11117,22 +11178,8 @@ Cẩm Nhung 01/04/2026 08:30
         document.addEventListener('click', function () { requestAnimationFrame(v9LayoutSegs); });
         window.addEventListener('resize', function () { v9MoveInd(); v9LayoutSegs(); });
         if (document.fonts) document.fonts.ready.then(function () { v9MoveInd(); v9LayoutSegs(); });
-        // Phím tắt ở danh sách sự cố: ↑ ↓ chuyển dòng, Esc đóng khung chi tiết
-        document.addEventListener('keydown', function (e) {
-          if (!document.getElementById('tab-issues').classList.contains('active')) return;
-          if (/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
-          if (document.getElementById('cmdkOverlay').classList.contains('open')) return;
-          if (['modal', 'crudModal'].some(function (id) { return document.getElementById(id).style.display === 'flex'; })) return;
-          if (e.key === 'Escape') { v9ClosePane(); return; }
-          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-            e.preventDefault();
-            var i = _PAGED.findIndex(function (d) { return d.row === V9_SELROW; });
-            var n = Math.max(0, Math.min(_PAGED.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)));
-            if (_PAGED[n]) { v9Pick(n); var tr = document.querySelector('#issueTableBody tr.sel'); if (tr) tr.scrollIntoView({ block: 'nearest' }); }
-          }
-        });
-        // Màn hình hẹp: khung chi tiết là ngăn kéo, mặc định đóng
-        if (window.innerWidth <= 1360) document.getElementById('v9Split').classList.add('closed');
+        // Khung chi tiết bên phải chỉ còn dùng trên điện thoại (toàn màn hình), mặc định đóng
+        document.getElementById('v9Split').classList.add('closed');
         switchTab('dashboard');
         crmConnUpdate();
         if (CRM_STATIC && !crmConn()) renderDashboard();
@@ -11464,7 +11511,7 @@ Cẩm Nhung 01/04/2026 08:30
         // Đổi cỡ màn hình (xoay ngang, mở rộng cửa sổ): đặt lại vị trí các ô điều khiển
         function onMQ() {
           placeIssueControls(); applyCards();
-          if (!MQ.matches) { menuClose(); filterClose(); sheetClose(brSheet, 'branch'); }
+          if (!MQ.matches) { menuClose(); filterClose(); sheetClose(brSheet, 'branch'); split.classList.add('closed'); }
         }
         if (MQ.addEventListener) MQ.addEventListener('change', onMQ); else MQ.addListener(onMQ);
         placeIssueControls(); applyCards();
