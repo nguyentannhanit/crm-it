@@ -1,0 +1,17 @@
+{
+  "name": "CRM Hỗ trợ IT — Gốm sứ Minh Phát",
+  "short_name": "CRM IT",
+  "description": "CRM hỗ trợ IT của Gốm sứ Minh Phát",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#E9EFF8",
+  "theme_color": "#12306F",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
