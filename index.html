@@ -4595,7 +4595,7 @@
   body { display: flex; flex-direction: column; height: 100dvh; -webkit-user-select: none; user-select: none }
   input, textarea, select, [contenteditable], .v9-paper, .md-cvalue, .v9-callout p, .v9-detail h3 { -webkit-user-select: text; user-select: text }
   .v9-top, .v9-head { display: none !important }
-  .main { flex: 1; min-height: 0; max-width: none; margin: 0; padding: 0 14px calc(var(--m-sab) + 112px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none }
+  .main { flex: 1; min-height: 0; max-width: none; margin: 0; padding: 0 14px calc(var(--m-sab) + 112px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: none }
   .main::-webkit-scrollbar { display: none }
   .tab-content { padding-top: 14px }
   /* Hiệu ứng vào trang chỉ đổi độ trong suốt và không giữ trạng thái cuối: transform hoặc fill-mode sẽ tạo lớp xếp chồng riêng, làm khung cố định (chi tiết, bộ lọc) bên trong bị kẹt dưới thanh trên/dưới */
@@ -4704,8 +4704,9 @@
   .modal { width: 100% !important; max-width: none !important; max-height: 92dvh; border-radius: 26px 26px 0 0; border-width: 1px 0 0; animation: mSheetUp .38s var(--ease) }
   .modal-header { padding: 14px 16px }
   .md-id { font-size: 19px }
-  .md-close { width: 40px; height: 40px }
+  .md-close { width: 44px; height: 44px }
   .modal-body { padding: 16px 16px calc(16px + var(--m-sab)) !important }
+  #modalFooter { padding-bottom: calc(14px + var(--m-sab)) !important }
   .md-grid { grid-template-columns: 1fr }
 
   /* ═══════════ TÌM KIẾM TOÀN HỆ THỐNG → TOÀN MÀN HÌNH ═══════════ */
@@ -4753,13 +4754,13 @@
   .v9-chip { flex: none; min-height: 44px }
 
   /* bộ lọc: nguyên khối .filters trở thành khung trượt từ dưới lên */
-  #tab-issues .filters { position: fixed; left: 0; right: 0; bottom: 0; z-index: 450; display: flex; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; box-sizing: border-box; max-height: 88dvh; margin: 0; overflow-y: auto; overscroll-behavior: contain;
+  #issueFilters { position: fixed; left: 0; right: 0; bottom: 0; z-index: 450; display: flex; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; box-sizing: border-box; max-height: 88dvh; margin: 0; overflow-y: auto; overscroll-behavior: contain;
     padding: 8px 16px calc(var(--m-sab) + 16px); border-radius: 26px 26px 0 0; background: var(--card); box-shadow: 0 -20px 40px -20px rgba(0, 0, 0, .4); transform: translateY(105%); visibility: hidden; transition: transform .42s var(--ease), visibility 0s .42s }
-  #tab-issues .filters.m-open { transform: none; visibility: visible; transition: transform .42s var(--ease), visibility 0s }
-  #tab-issues .filters .form-select { max-width: none !important; width: 100% !important; height: 50px }
-  #tab-issues .filters .sort-toggle { align-self: flex-start }
-  #tab-issues .filters .btn-refresh { display: none }
-  #tab-issues .filters .m-only { display: block }
+  #issueFilters.m-open { transform: none; visibility: visible; transition: transform .42s var(--ease), visibility 0s }
+  #issueFilters .form-select { max-width: none !important; width: 100% !important; height: 50px }
+  #issueFilters .sort-toggle { align-self: flex-start }
+  #issueFilters .btn-refresh { display: none }
+  #issueFilters .m-only { display: block }
   .m-sheet-foot { display: flex !important; gap: 10px; margin-top: 4px }
   .m-sheet-foot .btn { flex: 1 }
 
@@ -4786,15 +4787,14 @@
   #issueTable tbody td:nth-child(7), #issueTable tbody td:nth-child(9) { display: none }
   .v9-clamp { font-weight: 600 }
 
-  /* chi tiết sự cố: trượt từ phải sang, phủ toàn màn hình */
-  .v9-split.closed .v9-detail { display: flex !important }
+  /* chi tiết sự cố: trượt từ phải sang, phủ toàn màn hình. Script chuyển khung này ra ngoài vùng cuộn .main (xem mobileV10) */
   .v9-detail { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 400; display: flex; flex-direction: column; width: 100%; max-height: none; overflow: hidden; border: 0; border-radius: 0; background: var(--bg);
     transform: translateX(100%); visibility: hidden; transition: transform .38s var(--ease), visibility 0s .38s; box-shadow: -20px 0 40px -20px rgba(0, 0, 0, .4) }
-  .v9-split:not(.closed) .v9-detail { transform: none; visibility: visible; transition: transform .38s var(--ease), visibility 0s }
+  .v9-detail.m-open { transform: none; visibility: visible; transition: transform .38s var(--ease), visibility 0s }
   .v9-detail.swap { animation: none }
   .v9-detail .dh { flex: none; padding: calc(var(--m-sat) + 8px) 12px 10px; border-radius: 0; background: var(--card) }
-  .v9-detail .dh .btn:not(.m-back) { display: none }
-  .v9-detail .dh .m-back { display: inline-flex; width: 44px; padding: 0; order: -1 }
+  .v9-detail .dh .btn:not(.m-back) { width: 44px; min-height: 44px; padding: 0 }
+  .v9-detail .dh .m-back { display: inline-flex; width: auto; gap: 4px; padding: 0 14px 0 10px; order: -1 }
   .v9-detail .body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px 14px 20px; scrollbar-width: none }
   .v9-detail h3 { font-size: 18px }
   .v9-detail .byline { background: var(--card); border: 1px solid var(--border) }
@@ -9255,7 +9255,7 @@ Cẩm Nhung 01/04/2026 08:30
           return '<div class="v9-callout" data-c="' + c + '"><h4>' + v9ic(icon) + label + '</h4><p>' + (val ? esc(val) : '<span class="mute">Chưa có</span>') + '</p></div>';
         }
         box.innerHTML =
-          '<div class="dh"><button class="btn btn-sm m-back" onclick="v9ClosePane()" aria-label="Quay lại danh sách">' + v9ic('left') + '</button><span class="idc">#' + esc(d.id || d.row) + '</span><span>' + esc((d.tsDisplay || d.ts || '').substring(0, 10)) + '</span><span class="sp"></span>' +
+          '<div class="dh"><button class="btn btn-sm m-back" onclick="v9ClosePane()" aria-label="Quay lại danh sách">' + v9ic('left') + 'Danh sách</button><span class="idc">#' + esc(d.id || d.row) + '</span><span>' + esc((d.tsDisplay || d.ts || '').substring(0, 10)) + '</span><span class="sp"></span>' +
           '<button class="btn btn-sm" style="padding:4px 9px" onclick="v9ClosePane()" title="Đóng (Esc)">' + v9ic('x') + '</button></div>' +
           '<div class="body"><div class="pills">' + statusBadge(d.status) + sevBadge(d.severity) + v9TypeTag(d.ls) +
           ((d.quaHan || '').indexOf('Quá hạn') >= 0 ? '<span class="v9-pill solid" data-c="do"><i></i>Quá hạn</span>' : '') + '</div>' +
@@ -11265,6 +11265,12 @@ Cẩm Nhung 01/04/2026 08:30
         var filterBd = el('div', 'm-bd'); filterBd.id = 'mFilterBd';
         document.body.appendChild(filterBd);
 
+        // Hộp thoại, tìm kiếm, trợ lý AI và thông báo của bản web nằm bên trong vùng cuộn .main. Trên iPhone, phần tử cố định
+        // nằm trong vùng cuộn có thể bị kẹt theo nội dung (không phủ màn hình, nút đóng bị cuộn mất) → chuyển hẳn ra ngoài vùng cuộn.
+        ['clModal', 'cl3ResultModal', 'modal', 'crudModal', 'toast', 'cmdkOverlay', 'chatDock', 'chatFab'].forEach(function (id) {
+          var n = $(id); if (n && n.parentNode !== document.body) document.body.appendChild(n);
+        });
+
         // ═════════ Ngăn xếp lớp phủ + nút Back của điện thoại ═════════
         // Mỗi lớp phủ (menu, khung trượt, chi tiết, hộp thoại…) mở ra thì thêm một mục lịch sử;
         // bấm Back của điện thoại thì đóng lớp trên cùng thay vì thoát khỏi trang.
@@ -11381,7 +11387,8 @@ Cẩm Nhung 01/04/2026 08:30
         var issueBar = el('div'); issueBar.id = 'mIssueBar';
         var issueCount = el('div'); issueCount.id = 'mIssueCount';
         var filtersBox = document.querySelector('#tab-issues .filters');
-        var searchBox = $('searchBox'), resultCount = $('resultCount');
+        filtersBox.id = 'issueFilters';
+        var searchBox = $('searchBox'), resultCount = $('resultCount'), detailEl = $('v9Detail');
         var filterBtn = el('button', 'btn'); filterBtn.id = 'mFilterBtn'; filterBtn.dataset.c = 'lam';
         issueBar.appendChild(filterBtn);
         var tabIssues = $('tab-issues');
@@ -11393,14 +11400,18 @@ Cẩm Nhung 01/04/2026 08:30
         filtersBox.insertBefore(fHead, filtersBox.firstChild);
         filtersBox.appendChild(fFoot);
 
-        // Chuyển ô tìm và dòng đếm giữa "thanh trên danh sách" (điện thoại) và "bộ lọc" (máy tính)
+        // Chuyển ô tìm, dòng đếm, khung lọc và khung chi tiết giữa điện thoại (ra ngoài vùng cuộn) và máy tính (về chỗ cũ trong tab)
         function placeIssueControls() {
           if (MQ.matches) {
             if (searchBox.parentNode !== issueBar) issueBar.insertBefore(searchBox, filterBtn);
             if (resultCount.parentNode !== issueCount) issueCount.appendChild(resultCount);
+            if (filtersBox.parentNode !== document.body) document.body.appendChild(filtersBox);
+            if (detailEl.parentNode !== document.body) document.body.appendChild(detailEl);
           } else {
             if (searchBox.parentNode !== filtersBox) filtersBox.insertBefore(searchBox, fHead.nextSibling);
             if (resultCount.parentNode !== filtersBox) filtersBox.insertBefore(resultCount, fFoot);
+            if (filtersBox.parentNode !== tabIssues) tabIssues.insertBefore(filtersBox, split);
+            if (detailEl.parentNode !== split) split.appendChild(detailEl);
           }
         }
         var FILTER_IDS = ['filterGroup', 'filterDept', 'filterType', 'filterSeverity', 'filterMonth', 'filterYear'];
@@ -11428,6 +11439,10 @@ Cẩm Nhung 01/04/2026 08:30
         // ═════════ Chi tiết sự cố: nút Back của điện thoại ═════════
         var split = $('v9Split');
         watch(split, 'detail', function () { return !split.classList.contains('closed'); }, function () { split.classList.add('closed'); });
+        // Khung chi tiết nằm ngoài #v9Split nên mở/đóng theo lớp .m-open, đồng bộ với trạng thái "closed" của #v9Split
+        function syncDetail() { detailEl.classList.toggle('m-open', !split.classList.contains('closed')); }
+        new MutationObserver(syncDetail).observe(split, { attributes: true, attributeFilter: ['class'] });
+        syncDetail();
 
         // ═════════ Hộp thoại và các lớp phủ do code cũ mở ═════════
         [['modal', 'closeModal'], ['crudModal', 'closeCrud'], ['clModal', 'closeClModal'], ['cl3ResultModal', 'closeCl3ResultModal']].forEach(function (p) {
@@ -11493,6 +11508,7 @@ Cẩm Nhung 01/04/2026 08:30
         // ═════════ Đồng bộ với thao tác chuyển trang của bản web ═════════
         function sync(tab) {
           cur = tab;
+          if (tab !== 'issues') split.classList.add('closed');
           var P = PAGES[tab]; if (!P) return;
           topBar.dataset.c = P.c; dock.dataset.c = P.c;
           $('mTopIc').innerHTML = v9ic(P.i);
@@ -11509,11 +11525,15 @@ Cẩm Nhung 01/04/2026 08:30
         switchTab = function (tab) { origSwitchTab.apply(this, arguments); sync(tab); };
 
         // Đổi cỡ màn hình (xoay ngang, mở rộng cửa sổ): đặt lại vị trí các ô điều khiển
+        var lastMQ = MQ.matches;
         function onMQ() {
+          lastMQ = MQ.matches;
           placeIssueControls(); applyCards();
           if (!MQ.matches) { menuClose(); filterClose(); sheetClose(brSheet, 'branch'); split.classList.add('closed'); }
         }
         if (MQ.addEventListener) MQ.addEventListener('change', onMQ); else MQ.addListener(onMQ);
+        // Bảo hiểm: một số trình duyệt không bắn sự kiện "change" khi đổi cỡ cửa sổ hoặc xoay màn hình
+        window.addEventListener('resize', function () { if (MQ.matches !== lastMQ) onMQ(); });
         placeIssueControls(); applyCards();
         var activeTab = document.querySelector('.tab-content.active');
         sync(activeTab ? activeTab.id.replace('tab-', '') : 'dashboard');
