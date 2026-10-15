@@ -2962,14 +2962,7 @@
       animation: none
     }
 
-    .tab-content.active>* {
-      animation: v9rise .5s var(--ease) both
-    }
-
-    .tab-content.active>*:nth-child(2) { animation-delay: .05s }
-    .tab-content.active>*:nth-child(3) { animation-delay: .1s }
-    .tab-content.active>*:nth-child(4) { animation-delay: .15s }
-    .tab-content.active>*:nth-child(5) { animation-delay: .2s }
+    /* Hiệu ứng vào trang: xem bộ chuyển động 045 trong khối <style id="u045"> ở cuối phần <head> */
 
     .v9-head {
       display: flex;
@@ -4598,9 +4591,7 @@
   .main { flex: 1; min-height: 0; max-width: none; margin: 0; padding: 0 14px calc(var(--m-sab) + 112px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: none }
   .main::-webkit-scrollbar { display: none }
   .tab-content { padding-top: 14px }
-  /* Hiệu ứng vào trang chỉ đổi độ trong suốt và không giữ trạng thái cuối: transform hoặc fill-mode sẽ tạo lớp xếp chồng riêng, làm khung cố định (chi tiết, bộ lọc) bên trong bị kẹt dưới thanh trên/dưới */
-  .tab-content.active { animation: mFade .25s var(--ease) }
-  .tab-content.active > * { animation: none }
+  /* Hiệu ứng vào trang dùng bộ chuyển động 045 (khối <style id="u045">). Các lớp phủ cố định đã nằm ngoài vùng cuộn nên dùng transform được */
 
   /* ═══════════ THANH TRÊN ═══════════ */
   .m-top { flex: none; display: flex; align-items: center; gap: 10px; box-sizing: border-box; min-height: calc(var(--m-sat) + 62px); padding: calc(var(--m-sat) + 8px) 14px 10px; position: relative; z-index: 20; color: #fff;
@@ -4635,26 +4626,33 @@
   .m-cta:active { transform: translateY(3px); box-shadow: 0 0 0 }
   .m-cta[hidden] { display: none }
 
-  /* bảng chọn trang: bấm nút 3D → xổ lên từ dưới */
+  /* bảng chọn trang: bấm nút 3D → vòng tròn mở ra từ nút, phủ toàn màn hình (hiệu ứng 045). Nền luôn tối, chữ sáng như bản gốc */
   .m-menu { position: fixed; inset: 0; z-index: 25; display: block; pointer-events: none }
-  .m-menu-bg { position: absolute; inset: 0; background: rgba(8, 16, 36, .55); opacity: 0; transition: opacity .3s }
-  .m-menu-panel { position: absolute; left: 12px; right: 12px; bottom: calc(var(--m-sab) + 92px); max-height: calc(100% - var(--m-sat) - 110px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 16px 14px 14px; border-radius: 26px;
-    background: var(--card); box-shadow: 0 24px 50px -16px rgba(0, 0, 0, .5); opacity: 0; transform: translateY(36px) scale(.92); transform-origin: 50% 100%; transition: opacity .22s, transform .45s var(--m-spring) }
+  .m-menu-bg { display: none }
+  .m-menu-panel { position: absolute; inset: 0; box-sizing: border-box; padding: calc(var(--m-sat) + 28px) 22px calc(var(--m-sab) + 104px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; color: #F4F0E8;
+    background: radial-gradient(120% 70% at 100% 0%, #183694, transparent 60%), radial-gradient(90% 60% at 0% 100%, #0A6B52, transparent 65%), #0A1229;
+    clip-path: circle(0 at var(--cx, 50%) var(--cy, 92%)); visibility: hidden; transition: clip-path .7s var(--u045-ease), visibility 0s .7s }
   body.m-menu-open .m-menu { pointer-events: auto }
-  body.m-menu-open .m-menu-bg { opacity: 1 }
-  body.m-menu-open .m-menu-panel { opacity: 1; transform: none }
-  .m-mh { display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px 12px }
-  .m-mh b { font-size: 16px; font-weight: 800 }
-  .m-mh span { font-size: 12.5px; color: var(--muted); font-weight: 600 }
-  .m-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px }
-  .m-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 12px 4px 10px; border-radius: 18px; font: 700 12px/1.25 inherit; font-family: inherit; text-align: center; text-wrap: balance; color: var(--text); cursor: pointer;
-    background: var(--ct); border: 1.5px solid transparent; transition: transform .12s, border-color .2s, background .2s }
-  body.m-menu-open .m-tile { animation: mPop .45s var(--m-spring) both; animation-delay: calc(var(--i) * 32ms + 80ms) }
+  body.m-menu-open .m-menu-panel { clip-path: circle(var(--r, 1400px) at var(--cx, 50%) var(--cy, 92%)); visibility: visible; transition: clip-path .8s var(--u045-ease), visibility 0s }
+  .m-mh { display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px 14px }
+  .m-mh small { font-size: 11.5px; font-weight: 700; letter-spacing: .14em; color: rgba(244, 240, 232, .74) }
+  .m-mh span { font-size: 12.5px; color: rgba(244, 240, 232, .9); font-weight: 600 }
+  body.m-menu-open .m-mh { animation: u045RiseS .6s var(--u045-spring) backwards, u045Fade .35s var(--u045-ease) backwards; animation-delay: .18s }
+  .m-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px }
+  .m-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 4px 12px; border-radius: 18px; font: 700 12px/1.25 inherit; font-family: inherit; text-align: center; text-wrap: balance; color: #F4F0E8; cursor: pointer;
+    background: rgba(255, 255, 255, .07); border: 1.5px solid rgba(255, 255, 255, .12); transition: transform .12s, border-color .2s, background .2s }
+  /* các hàng ô nổi lên lần lượt: mỗi hàng 3 ô, so le 60ms, bắt đầu sau khi vòng tròn mở ra được .22s */
+  body.m-menu-open .m-tile { animation: u045Rise .7s var(--u045-spring) backwards, u045Fade .4s var(--u045-ease) backwards; animation-delay: calc(.22s + var(--row, 0) * 60ms) }
   .m-tile:active { transform: scale(.94) }
-  .m-tile .ti { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; color: var(--on, #fff); background: var(--c); box-shadow: 0 3px 0 var(--ce) }
+  .m-tile .ti { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; color: #0B1220; background: var(--cl); box-shadow: 0 3px 0 color-mix(in srgb, var(--cl) 50%, #000) }
   .m-tile .ti .ic { width: 24px; height: 24px }
-  .m-tile.on { border-color: var(--c); background: var(--card); box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 40%, transparent) }
+  .m-tile.on { border-color: var(--cl); background: rgba(255, 255, 255, .13) }
+  .m-tile:focus-visible { outline: 2px solid #B7A4FF; outline-offset: 2px }
   .m-tile .bd { position: absolute; top: 6px; right: 8px; min-width: 20px; padding: 0 6px; border-radius: 10px; background: #D63B25; color: #fff; font: 700 11px/20px 'IBM Plex Mono', ui-monospace, Consolas, monospace }
+  /* thanh dưới khi menu mở: trong suốt, chỉ còn nút 3D (đã đổi thành ×); tìm kiếm và nút hành động ẩn */
+  .m-side { transition: opacity .3s }
+  body.m-menu-open .m-dock { background: transparent; border-top-color: transparent; box-shadow: none }
+  body.m-menu-open .m-side { opacity: 0; pointer-events: none }
 
   /* ═══════════ KHUNG TRƯỢT TỪ DƯỚI LÊN (chi nhánh, bộ lọc) ═══════════ */
   .m-sheet { position: fixed; inset: 0; z-index: 450; display: block; pointer-events: none }
@@ -4787,10 +4785,10 @@
   #issueTable tbody td:nth-child(7), #issueTable tbody td:nth-child(9) { display: none }
   .v9-clamp { font-weight: 600 }
 
-  /* chi tiết sự cố: trượt từ phải sang, phủ toàn màn hình. Script chuyển khung này ra ngoài vùng cuộn .main (xem mobileV10) */
+  /* chi tiết sự cố: vòng tròn mở ra từ chỗ chạm, phủ toàn màn hình (hiệu ứng 045). Script chuyển khung này ra ngoài vùng cuộn .main (xem mobileV10) */
   .v9-detail { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 400; display: flex; flex-direction: column; width: 100%; max-height: none; overflow: hidden; border: 0; border-radius: 0; background: var(--bg);
-    transform: translateX(100%); visibility: hidden; transition: transform .38s var(--ease), visibility 0s .38s; box-shadow: -20px 0 40px -20px rgba(0, 0, 0, .4) }
-  .v9-detail.m-open { transform: none; visibility: visible; transition: transform .38s var(--ease), visibility 0s }
+    clip-path: circle(0 at var(--cx, 50%) var(--cy, 40%)); visibility: hidden; transition: clip-path .7s var(--u045-ease), visibility 0s .7s }
+  .v9-detail.m-open { clip-path: circle(var(--r, 1400px) at var(--cx, 50%) var(--cy, 40%)); visibility: visible; transition: clip-path .8s var(--u045-ease), visibility 0s }
   .v9-detail.swap { animation: none }
   .v9-detail .dh { flex: none; padding: calc(var(--m-sat) + 8px) 12px 10px; border-radius: 0; background: var(--card) }
   .v9-detail .dh .btn:not(.m-back) { width: 44px; min-height: 44px; padding: 0 }
@@ -4888,8 +4886,96 @@
   .m-top { min-height: calc(var(--m-sat) + 48px); padding-top: calc(var(--m-sat) + 4px); padding-bottom: 6px }
   .m-dock { height: calc(var(--m-sab) + 58px) }
   .m-menu-btn { width: 56px; height: 56px; margin-top: -22px }
-  .m-menu-panel { bottom: calc(var(--m-sab) + 70px) }
   .main { padding-bottom: calc(var(--m-sab) + 90px) }
+}
+  </style>
+  <style id="u045">
+/* Lucian UX/UI Prompt #045 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#045 */
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHUYỂN ĐỘNG "MENU TOÀN MÀN HÌNH MỞ RA TỪ NÚT" (045)
+   Dùng chung cho: chuyển tab lớn và nhỏ, popup, khung chi tiết, menu điện thoại.
+   Giá trị chuyển động lấy nguyên từ bản gốc: đường cong ease/spring, vòng tròn mở ra .8s (đóng .7s),
+   trang phía sau lùi scale(.92) + translateY(14px) + blur(3px) trong .7s, chữ nổi lên 26px bằng spring .7s
+   kèm hiện dần .4s, so le 60ms mỗi dòng. Mọi lớp dùng tiền tố u045 hoặc .m-* để không trùng lớp cũ.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root { --u045-ease: cubic-bezier(.2, .8, .2, 1); --u045-spring: cubic-bezier(.34, 1.45, .64, 1) }
+@keyframes u045Rise { from { transform: translateY(26px) } to { transform: none } }
+@keyframes u045RiseS { from { transform: translateY(14px) } to { transform: none } }
+@keyframes u045Fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes u045Reveal {
+  from { clip-path: circle(0 at var(--cx, 50%) var(--cy, 50%)) }
+  to { clip-path: circle(var(--r, 1200px) at var(--cx, 50%) var(--cy, 50%)) }
+}
+
+/* ── Chuyển tab lớn: các khối của trang nổi lên lần lượt (thay hiệu ứng v9rise cũ). Không giữ trạng thái cuối (fill backwards)
+      để không tạo lớp xếp chồng thừa sau khi chạy xong ── */
+.tab-content.active > * { animation: u045Rise .7s var(--u045-spring) backwards, u045Fade .4s var(--u045-ease) backwards; animation-delay: calc(var(--u-k, 0) * 60ms) }
+.tab-content.active > :nth-child(2) { --u-k: 1 }
+.tab-content.active > :nth-child(3) { --u-k: 2 }
+.tab-content.active > :nth-child(4) { --u-k: 3 }
+.tab-content.active > :nth-child(5) { --u-k: 4 }
+.tab-content.active > :nth-child(6) { --u-k: 5 }
+.tab-content.active > :nth-child(7) { --u-k: 6 }
+.tab-content.active > :nth-child(n+8) { --u-k: 7 }
+
+/* ── Tab nhỏ (đổi chế độ nhập, loại tài sản, lịch sử/danh mục, thanh con): phần vừa hiện nổi lên nhẹ hơn, 50ms mỗi khối ── */
+.u045-in > * { animation: u045RiseS .6s var(--u045-spring) backwards, u045Fade .35s var(--u045-ease) backwards; animation-delay: calc(var(--u-k, 0) * 50ms) }
+.u045-in > :nth-child(2) { --u-k: 1 }
+.u045-in > :nth-child(3) { --u-k: 2 }
+.u045-in > :nth-child(4) { --u-k: 3 }
+.u045-in > :nth-child(5) { --u-k: 4 }
+.u045-in > :nth-child(6) { --u-k: 5 }
+.u045-in > :nth-child(n+7) { --u-k: 6 }
+
+/* ── Ô trắng trượt theo mục đang chọn (thanh menu, nhóm nút chọn): trượt kiểu spring như ba gạch của nút menu ── */
+.v9-ind { transition: transform .55s var(--u045-spring), width .4s var(--u045-ease) }
+.v9-seg .thumb, .sort-toggle .thumb { transition: transform .55s var(--u045-spring), width .4s var(--u045-ease) }
+
+/* ── Trang phía sau lùi lại khi có popup/khung trượt (class u045-recede do script gắn) hoặc menu điện thoại mở.
+      Làm mờ (blur) chỉ dùng với chuột; màn cảm ứng bỏ blur để thao tác mượt ── */
+.main { transform-origin: 50% 0; transition: transform .7s var(--u045-ease), filter .7s var(--u045-ease) }
+body.u045-recede .main { transform: scale(.96) translateY(10px) }
+body.m-menu-open .main { transform: scale(.92) translateY(14px) }
+@media (hover: hover) and (pointer: fine) {
+  body.u045-recede .main, body.m-menu-open .main { filter: blur(3px) }
+}
+
+/* ── Popup: vòng tròn mở ra từ chỗ vừa bấm, nội dung nổi lên từng khối, chân popup vào sau cùng ── */
+.modal-overlay.u045-live > .modal, .cmdk-overlay.u045-live > .cmdk { animation: u045Reveal .8s var(--u045-ease) }
+.modal-overlay.u045-live .modal-header-bar, .modal-overlay.u045-live .md-badges { animation: u045RiseS .6s var(--u045-spring) backwards, u045Fade .35s var(--u045-ease) backwards; animation-delay: .12s }
+.modal-overlay.u045-live .modal-body > * { animation: u045Rise .7s var(--u045-spring) backwards, u045Fade .4s var(--u045-ease) backwards; animation-delay: calc(.22s + var(--u-k, 0) * 60ms) }
+.modal-overlay.u045-live .modal-body > :nth-child(2) { --u-k: 1 }
+.modal-overlay.u045-live .modal-body > :nth-child(3) { --u-k: 2 }
+.modal-overlay.u045-live .modal-body > :nth-child(4) { --u-k: 3 }
+.modal-overlay.u045-live .modal-body > :nth-child(5) { --u-k: 4 }
+.modal-overlay.u045-live .modal-body > :nth-child(n+6) { --u-k: 5 }
+.modal-overlay.u045-live .modal > :not(.modal-header):not(.modal-body) { animation: u045RiseS .6s var(--u045-spring) backwards, u045Fade .4s var(--u045-ease) backwards; animation-delay: .5s }
+/* điện thoại: popup vẫn là khung trượt từ dưới lên (đúng thói quen cảm ứng), chỉ thêm nội dung nổi lên và trang phía sau lùi */
+@media (max-width:760px), (max-height:520px) and (max-width:1000px) and (pointer:coarse) {
+  .modal-overlay.u045-live > .modal { animation: mSheetUp .38s var(--ease) }
+}
+
+/* ── Phần của giao diện điện thoại: khung chi tiết, khung lọc, khung chọn chi nhánh ── */
+.v9-detail.m-open .dh { animation: u045RiseS .6s var(--u045-spring) backwards, u045Fade .35s var(--u045-ease) backwards; animation-delay: .12s }
+.v9-detail.m-open .body > * { animation: u045Rise .7s var(--u045-spring) backwards, u045Fade .4s var(--u045-ease) backwards; animation-delay: calc(.22s + var(--u-k, 0) * 60ms) }
+.v9-detail.m-open .body > :nth-child(2) { --u-k: 1 }
+.v9-detail.m-open .body > :nth-child(3) { --u-k: 2 }
+.v9-detail.m-open .body > :nth-child(4) { --u-k: 3 }
+.v9-detail.m-open .body > :nth-child(5) { --u-k: 4 }
+.v9-detail.m-open .body > :nth-child(n+6) { --u-k: 5 }
+.v9-detail.m-open .foot { animation: u045RiseS .6s var(--u045-spring) backwards, u045Fade .4s var(--u045-ease) backwards; animation-delay: .5s }
+.m-sheet.on .m-opt, #issueFilters.m-open > * { animation: u045RiseS .6s var(--u045-spring) backwards, u045Fade .35s var(--u045-ease) backwards; animation-delay: calc(.12s + var(--u-k, 0) * 50ms) }
+.m-sheet.on .m-opt:nth-child(2), #issueFilters.m-open > :nth-child(3) { --u-k: 1 }
+.m-sheet.on .m-opt:nth-child(3), #issueFilters.m-open > :nth-child(4) { --u-k: 2 }
+.m-sheet.on .m-opt:nth-child(n+4), #issueFilters.m-open > :nth-child(5) { --u-k: 3 }
+#issueFilters.m-open > :nth-child(6) { --u-k: 4 }
+#issueFilters.m-open > :nth-child(n+7) { --u-k: 5 }
+
+/* ── Bật "giảm chuyển động" của hệ điều hành: mọi thứ vào thẳng trạng thái cuối, chức năng vẫn dùng bình thường ── */
+@media (prefers-reduced-motion: reduce) {
+  .main, .m-menu-panel, .v9-detail, .v9-ind, .v9-seg .thumb, .sort-toggle .thumb { transition-duration: .001ms !important; transition-delay: 0s !important }
+  .tab-content.active > *, .u045-in > *, .modal-overlay.u045-live, .modal-overlay.u045-live *, .cmdk-overlay.u045-live *,
+  .m-menu-panel *, .v9-detail.m-open *, .m-sheet.on .m-opt, #issueFilters.m-open > * { animation-duration: .001ms !important; animation-delay: 0s !important }
 }
   </style>
   <!-- Bản web app: cài được lên màn hình chính, có biểu tượng riêng -->
@@ -11186,6 +11272,65 @@ Cẩm Nhung 01/04/2026 08:30
       })();
 
     </script>
+    <!-- ═══ CHUYỂN ĐỘNG 045: vòng tròn mở ra từ chỗ bấm, trang phía sau lùi lại, chuyển tab nổi lên từng khối ═══ -->
+    <script>
+      /* Lucian UX/UI Prompt #045 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#045 */
+      (function u045() {
+        var $ = function (id) { return document.getElementById(id); };
+
+        // Vị trí bấm/chạm gần nhất: gốc của vòng tròn mở ra
+        var pt = { x: 0, y: 0, t: 0 };
+        function mark(x, y) { pt.x = x; pt.y = y; pt.t = Date.now(); }
+        document.addEventListener('pointerdown', function (e) { mark(e.clientX, e.clientY); }, true);
+        document.addEventListener('click', function (e) {
+          // click sinh ra từ bàn phím (Enter/Space) không có toạ độ: lấy tâm của phần tử
+          if (e.detail !== 0 || !e.target.getBoundingClientRect) return;
+          var r = e.target.getBoundingClientRect(); mark(r.left + r.width / 2, r.top + r.height / 2);
+        }, true);
+        // Điểm bấm trong 1,5 giây gần nhất, hoặc null nếu không có (mở bằng phím tắt…)
+        window.u045Point = function () { return Date.now() - pt.t < 1500 ? { x: pt.x, y: pt.y } : null; };
+
+        // Đặt tâm và bán kính vòng tròn cho một hộp (toạ độ tính từ góc trái-trên của hộp, bán kính đủ phủ hết hộp)
+        window.u045Circle = function (box, p, pad) {
+          var r = box.getBoundingClientRect(), x = p ? p.x - r.left : r.width / 2, y = p ? p.y - r.top : r.height / 2;
+          x = Math.max(0, Math.min(r.width, x)); y = Math.max(0, Math.min(r.height, y));
+          box.style.setProperty('--cx', x + 'px'); box.style.setProperty('--cy', y + 'px');
+          box.style.setProperty('--r', (Math.hypot(Math.max(x, r.width - x), Math.max(y, r.height - y)) + (pad || 80)) + 'px');
+        };
+
+        // Trang phía sau lùi lại khi có lớp phủ mở; nhiều lớp cùng mở vẫn đúng (mỗi lớp một khoá)
+        var holders = {};
+        window.u045Recede = function (key, on) {
+          if (on) holders[key] = 1; else delete holders[key];
+          document.body.classList.toggle('u045-recede', Object.keys(holders).length > 0);
+        };
+
+        // Popup (các hộp thoại và ô tìm kiếm): vòng tròn mở ra từ chỗ vừa bấm. Code cũ mở bằng style.display hoặc lớp "open"
+        // nên theo dõi thuộc tính để biết lúc mở/đóng, không sửa các hàm mở hộp thoại.
+        [['modal', 's'], ['crudModal', 's'], ['clModal', 's'], ['cl3ResultModal', 's'], ['cmdkOverlay', 'c']].forEach(function (p) {
+          var ov = $(p[0]); if (!ov) return;
+          function sync() {
+            var on = p[1] === 'c' ? ov.classList.contains('open') : ov.style.display === 'flex';
+            if (on === ov.classList.contains('u045-live')) return;
+            if (on) { var box = ov.querySelector('.modal, .cmdk'); if (box) window.u045Circle(box, window.u045Point(), 110); }
+            ov.classList.toggle('u045-live', on);
+            window.u045Recede(p[0], on);
+          }
+          new MutationObserver(sync).observe(ov, { attributes: true, attributeFilter: [p[1] === 'c' ? 'class' : 'style'] });
+        });
+
+        // Tab nhỏ và chuyển tab lớn: chạy lại hiệu ứng nổi lên cho phần vừa hiện. Bọc các hàm đổi tab có sẵn, không sửa thân hàm.
+        function swap(el) { if (!el) return; el.classList.remove('u045-in'); void el.offsetWidth; el.classList.add('u045-in'); }
+        function wrap(name, after) {
+          var f = window[name]; if (typeof f !== 'function') return;
+          window[name] = function () { var r = f.apply(this, arguments); try { after.apply(this, arguments); } catch (e) { } return r; };
+        }
+        wrap('switchTab', function () { swap($('pageHead')); swap($('subTabs')); });
+        wrap('switchMode', function (m) { swap($({ manual: 'formManual', auto: 'formAuto', zalo: 'formZalo' }[m])); });
+        wrap('switchAsset', function (k) { swap($('asset' + String(k).toUpperCase() + 'Wrap')); });
+        wrap('cl3SwitchTab', function (t) { swap($(t === 'history' ? 'cl3PanelHistory' : 'cl3PanelCatalog')); });
+      })();
+    </script>
     <!-- ═══ GIAO DIỆN ĐIỆN THOẠI (V10): khung điều hướng dưới + menu 3D, đồng bộ với bản web ═══ -->
     <script>
       (function mobileV10() {
@@ -11255,7 +11400,7 @@ Cẩm Nhung 01/04/2026 08:30
         document.body.appendChild(dock);
 
         var menu = el('div', 'm-menu'); menu.id = 'mMenu';
-        menu.innerHTML = '<div class="m-menu-bg" id="mMenuBg"></div><div class="m-menu-panel" id="mMenuPanel"></div>';
+        menu.innerHTML = '<div class="m-menu-bg" id="mMenuBg"></div><div class="m-menu-panel" id="mMenuPanel" role="dialog" aria-modal="true" aria-label="Menu chuyển trang" aria-hidden="true"></div>';
         document.body.appendChild(menu);
 
         var brSheet = el('div', 'm-sheet'); brSheet.id = 'mBrSheet';
@@ -11312,24 +11457,46 @@ Cẩm Nhung 01/04/2026 08:30
           return b.textContent.trim() === '0' ? '' : b.textContent.trim();
         }
         function buildMenu() {
-          var html = '<div class="m-mh"><b>Chuyển trang</b><span>' + PAGES[cur].t + '</span></div><div class="m-tiles">';
+          var html = '<div class="m-mh"><small>MENU</small><span>' + PAGES[cur].t + '</span></div><div class="m-tiles">';
           ORDER.forEach(function (id, n) {
             var p = PAGES[id], bd = BADGE_SRC[id] ? badgeText(BADGE_SRC[id]) : '';
-            html += '<button class="m-tile' + (cur === id ? ' on' : '') + '" data-c="' + p.c + '" data-go="' + id + '" style="--i:' + n + '"><span class="ti">' + v9ic(p.i) + '</span>' + p.l + (bd ? '<span class="bd">' + bd + '</span>' : '') + '</button>';
+            html += '<button class="m-tile' + (cur === id ? ' on' : '') + '" data-c="' + p.c + '" data-go="' + id + '" style="--i:' + n + ';--row:' + Math.floor(n / 3) + '"><span class="ti">' + v9ic(p.i) + '</span>' + p.l + (bd ? '<span class="bd">' + bd + '</span>' : '') + '</button>';
           });
-          html += '<button class="m-tile" data-c="tim" data-chat="1" style="--i:' + ORDER.length + '"><span class="ti">' + v9ic('sparkle') + '</span>Trợ lý AI</button></div>';
+          html += '<button class="m-tile" data-c="tim" data-chat="1" style="--i:' + ORDER.length + ';--row:' + Math.floor(ORDER.length / 3) + '"><span class="ti">' + v9ic('sparkle') + '</span>Trợ lý AI</button></div>';
           $('mMenuPanel').innerHTML = html;
         }
+        // Vòng tròn mở ra từ tâm nút 3D; trang phía sau không còn bấm/focus được trong lúc menu mở (inert)
+        var menuBtn = $('mMenuBtn'), menuPanel = $('mMenuPanel');
+        function menuOrigin() {
+          var r = menuBtn.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+          menuPanel.style.setProperty('--cx', x + 'px'); menuPanel.style.setProperty('--cy', y + 'px');
+          menuPanel.style.setProperty('--r', (Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 24) + 'px');
+        }
+        function menuSet(on) {
+          document.body.classList.toggle('m-menu-open', on);
+          menuBtn.setAttribute('aria-expanded', String(on));
+          menuBtn.setAttribute('aria-label', on ? 'Đóng menu' : 'Mở menu');
+          menuPanel.setAttribute('aria-hidden', String(!on));
+          [document.querySelector('.main'), topBar].concat([].slice.call(dock.querySelectorAll('.m-side'))).forEach(function (n) { if (n) n.inert = on; });
+        }
         function menuOpen() {
-          buildMenu();
-          document.body.classList.add('m-menu-open');
-          layerOpen('menu', function () { document.body.classList.remove('m-menu-open'); });
+          buildMenu(); menuOrigin(); menuSet(true);
+          layerOpen('menu', function () { menuSet(false); });
         }
         function menuClose() {
           if (!document.body.classList.contains('m-menu-open')) return;
-          document.body.classList.remove('m-menu-open');
+          menuSet(false);
           layerDone('menu');
         }
+        // Bàn phím: Esc đóng menu; Tab quay vòng trong menu (nút menu + các ô trang)
+        document.addEventListener('keydown', function (e) {
+          if (!document.body.classList.contains('m-menu-open')) return;
+          if (e.key === 'Escape') { e.preventDefault(); menuClose(); menuBtn.focus(); return; }
+          if (e.key !== 'Tab') return;
+          var list = [menuBtn].concat([].slice.call(menuPanel.querySelectorAll('.m-tile'))), i = list.indexOf(document.activeElement);
+          e.preventDefault();
+          list[i < 0 ? 0 : (i + (e.shiftKey ? -1 : 1) + list.length) % list.length].focus();
+        });
         $('mMenuBtn').onclick = function () { document.body.classList.contains('m-menu-open') ? menuClose() : menuOpen(); };
         $('mMenuBg').onclick = menuClose;
         $('mMenuPanel').addEventListener('click', function (e) {
@@ -11340,11 +11507,12 @@ Cẩm Nhung 01/04/2026 08:30
         });
 
         // ═════════ Khung trượt chọn chi nhánh ═════════
+        function recede(key, on) { if (window.u045Recede) window.u045Recede(key, on); }
         function sheetOpen(sheet, id) {
-          sheet.classList.add('on');
-          layerOpen(id, function () { sheet.classList.remove('on'); });
+          sheet.classList.add('on'); recede(id, true);
+          layerOpen(id, function () { sheet.classList.remove('on'); recede(id, false); });
         }
-        function sheetClose(sheet, id) { if (!sheet.classList.contains('on')) return; sheet.classList.remove('on'); layerDone(id); }
+        function sheetClose(sheet, id) { if (!sheet.classList.contains('on')) return; sheet.classList.remove('on'); recede(id, false); layerDone(id); }
         function branchLabel() { return BRANCH_SEL || 'Tất cả'; }
         $('mBrBtn').onclick = function () {
           var list = [].map.call(document.querySelectorAll('#cnSeg button'), function (b) { return [b.dataset.cn, b.dataset.cn || 'Tất cả chi nhánh']; });
@@ -11421,12 +11589,12 @@ Cẩm Nhung 01/04/2026 08:30
           $('mFilterOk').textContent = 'Xem ' + (resultCount.textContent.replace(/\D+/g, '') || '0') + ' sự cố';
         }
         function filterOpen() {
-          filtersBox.classList.add('m-open'); filterBd.classList.add('on');
-          layerOpen('filter', function () { filtersBox.classList.remove('m-open'); filterBd.classList.remove('on'); });
+          filtersBox.classList.add('m-open'); filterBd.classList.add('on'); recede('filter', true);
+          layerOpen('filter', function () { filtersBox.classList.remove('m-open'); filterBd.classList.remove('on'); recede('filter', false); });
         }
         function filterClose() {
           if (!filtersBox.classList.contains('m-open')) return;
-          filtersBox.classList.remove('m-open'); filterBd.classList.remove('on'); layerDone('filter');
+          filtersBox.classList.remove('m-open'); filterBd.classList.remove('on'); recede('filter', false); layerDone('filter');
         }
         filterBtn.onclick = filterOpen; filterBd.onclick = filterClose;
         $('mFilterOk').onclick = filterClose;
@@ -11440,7 +11608,18 @@ Cẩm Nhung 01/04/2026 08:30
         var split = $('v9Split');
         watch(split, 'detail', function () { return !split.classList.contains('closed'); }, function () { split.classList.add('closed'); });
         // Khung chi tiết nằm ngoài #v9Split nên mở/đóng theo lớp .m-open, đồng bộ với trạng thái "closed" của #v9Split
-        function syncDetail() { detailEl.classList.toggle('m-open', !split.classList.contains('closed')); }
+        function syncDetail() {
+          var open = !split.classList.contains('closed');
+          if (open && !detailEl.classList.contains('m-open')) {
+            // đặt tâm vòng tròn tại chỗ vừa chạm (không có thì giữa phần trên màn hình), ép tính lại style rồi mới mở để vòng tròn xuất phát đúng chỗ
+            var p = (window.u045Point && window.u045Point()) || { x: innerWidth / 2, y: 120 };
+            detailEl.style.setProperty('--cx', p.x + 'px'); detailEl.style.setProperty('--cy', p.y + 'px');
+            detailEl.style.setProperty('--r', (Math.hypot(Math.max(p.x, innerWidth - p.x), Math.max(p.y, innerHeight - p.y)) + 24) + 'px');
+            void detailEl.offsetWidth;
+          }
+          detailEl.classList.toggle('m-open', open);
+          recede('detail', open);
+        }
         new MutationObserver(syncDetail).observe(split, { attributes: true, attributeFilter: ['class'] });
         syncDetail();
 
