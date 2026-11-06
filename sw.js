@@ -1,7 +1,7 @@
 // Service worker của bản web app. Chiến lược "mạng trước, bộ nhớ đệm dự phòng":
 // có mạng thì luôn lấy bản mới nhất từ GitHub (nên đẩy bản mới lên là điện thoại nhận được), mất mạng thì mở bản đã lưu.
 // Chỉ xử lý file cùng nguồn; lời gọi dữ liệu tới Apps Script và thư viện CDN đi thẳng ra mạng, không qua đây.
-const VERSION = 'crm-web-20261105-213029';
+const VERSION = 'crm-web-20261106-142134';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-48.png'];
 
 self.addEventListener('install', function (e) {
